@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recipe Management</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        header {
+            background-color: navy;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            color: white;
+        }
+
+        nav a{
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 16px;
+        }
+        nav{
+            display: flex;
+        }
+        nav a:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            margin-left: 25px;
+        }
+
+        .dropdown #recipe {
+            margin-left: 0;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        #createRecipe:hover{
+            cursor: pointer;
+            color: red;
+        }
+        #allRecipes:hover{
+            cursor: pointer;
+            color: red;
+        }
+        #recipeById:hover{
+            cursor: pointer;
+            color: red;
+        }
+        #Myrecipes:hover{
+            cursor: pointer;
+            color: red;
+        }
+        #cart:hover{
+            cursor: pointer;
+            color: red;
+        }
+        footer {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>🍴 Recipe Management</h1>
+
+        <nav>
+            <a href="">Home</a>
+            <div class="dropdown">
+            <a id="recipe">Recipes</a>
+            <div class="dropdown-content" id="menu">
+                <p id="createRecipe">Create Recipe</p>
+                <p id="allRecipes">Show All Recipes</p>
+                <p id="recipeById">Recipe by ID</p>
+                <p id="Myrecipes">My recipes</p>
+                <p id="cart">Cart</p>
+
+            </div>
+            </div>
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+        </nav>
+    </header>
+
+    <main>
+    </main>
+
+    <footer>
+        <p>Recipe Management</p>
+    </footer>
+    <script>
+
+        // localStorage.removeItem("token")
+        let recipe=document.getElementById("recipe")
+        let menu=document.getElementById("menu")
+        recipe.addEventListener("click",()=>{
+            let d=menu.classList.toggle("none")
+            if(d){
+                menu.style.display="block"
+            }
+            else{
+                menu.style.display="none"
+            } 
+        })
+
+        // cart
+        let cart=document.querySelector("#cart")
+        cart.addEventListener("click",()=>{
+            let d=menu.classList.toggle("block")
+            if(d){
+                menu.style.display="none"
+            }
+            let token=localStorage.getItem("token")
+            console.log("token",token);
+            if(!token){
+                alert("user not login")
+                return
+            }
+            else{
+                window.location.href='cart.html'
+            }
+
+        })
+
+        //My recipes
+        let MENU=document.getElementById("menu")
+        let Myrecipes=document.getElementById("Myrecipes")
+        Myrecipes.addEventListener("click",async ()=>{
+            let d=menu.classList.toggle("block")
+            if(d){
+                menu.style.display="none"
+            }
+            let token=localStorage.getItem("token")
+            console.log("token",token);
+            if(!token){
+                alert("user not login")
+                return
+            }
+            else{
+                try{
+                    let response=await fetch("http://127.0.0.1:8000/all_mine",{
+                        method:"GET",
+                        headers:{
+                        "authorization":`Bearer ${token}`
+                    }
+                    
+                    })
+                    let data=await response.json()
+                    if(response.ok){
+                        let main=document.querySelector("main")
+                        let recipes=data["my_recipes"]
+                        main.innerHTML=`
+                        <h1>MY_RECIPES🍽️</h1>
+                        <div id="d1"></div>
+                        
+                        `
+                        
+                        let container=document.getElementById("d1")
+                        recipes.forEach((recipes)=>{
+                container.innerHTML+=`
+                <h2>${recipes.title}</h2>
+                <p>
+                    <b>Description</b>
+                    ${recipes.description}
+                    </p>
+                    <p>
+                    <b>Ingredients</b>
+                    ${recipes.ingredients}
+                    </p>
+                    <p>
+                    <b>Instructions</b>
+                    ${recipes.instructions}
+                    </p>
+                    <p>
+                    <b>recipe_id</b>
+                    ${recipes.id}
+                    </p>
+                    <hr>
+                `
+            })
+                    }
+                else{
+                    alert(data.detail || "Recipes not found");
+                }
+                }
+                catch(error){
+                    alert(error.message)
+                }
+            }
+        })
+
+
+        //Recipe by ID
+        let recipeById=document.getElementById("recipeById")
+        let MENU1=document.getElementById("menu")
+        recipeById.addEventListener("click",()=>{
+            let d=menu.classList.toggle("block")
+            if(d){
+                menu.style.display="none"
+            }
+            
+            let token=localStorage.getItem("token")
+            console.log("token",token);
+            if(!token){
+                alert("user not login")
+                return
+            }
+            else{
+                
+                    let main=document.querySelector("main")
+                    main.innerHTML=`
+                    <h1>Get Recipe BY Id</h1><br>
+                    <b>id</b>
+                    <input id="id" type="text" placeholder="enter id">
+                    <button id="search_id">Search</button>
+                    <div id="container"></div>                  
+                    `
+                    
+                    let inp=document.querySelector("#id")
+                    let btn=document.querySelector("button")
+                    
+                    btn.addEventListener("click",async ()=>{
+                        if (!inp.value) {
+                            alert("Please enter recipe ID");
+                            return;
+                        }
+                        try{
+                            let response=await fetch(`http://127.0.0.1:8000/get_recipe/${inp.value}`,{
+                                method:"GET",
+                                headers:{
+                                "authorization":`Bearer ${token}`
+                            }
+                            })
+                            let data=await response.json()
+                            if(response.ok){
+                                let cont=document.getElementById("container")
+                                cont.innerHTML=`
+                                    <h2>${data.title}</h2>
+                                    <p>
+                                        <b>Description</b>
+                                        ${data.description}
+                                        </p>
+                                        <p>
+                                        <b>Ingredients</b>
+                                        ${data.ingredients}
+                                    </p>
+                                    <p>
+                                            <b>Instructions</b>
+                                            ${data.instructions}
+                                            </p>
+                                            <button id=del>Delete</button>
+                                            <button id=put>Update</button>
+                                            <hr>
+                                        `
+                                    // #####################################################################
+                                    let del=document.getElementById("del")
+                                    let put=document.getElementById("put")
+                                    del.addEventListener("click",async ()=>{
+                                    try{
+                                    let response=await fetch(`http://127.0.0.1:8000/delete/${inp.value}`,{
+                                        method:"DELETE",
+                                        headers:{
+                                        "authorization":`Bearer ${token}`
+                                    }
+                                    })
+                            let data=await response.json()
+                            if(response.ok){
+                                alert(data.message)
+                            }
+                            else{
+                                alert("recipe not deleted")
+                            }
+                            }
+                            catch(error){
+                                alert(error.message)
+                            }
+                            })
+                            // #####################################################################
+                            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                            put.addEventListener("click",async ()=>{
+                                 main.innerHTML=`
+                                    <h2 style="text-align:center">Create Recipe</h2>
+                                    <span>title:</span>
+                                    <input id="title" type="text" placeholder="title"><br>
+                                    <span>description:</span>
+                                    <textarea id="desc" placeholder="description"></textarea><br>
+                                    <span>ingredients:</span>
+                                    <textarea id="ingd" placeholder="ingredients"></textarea><br>
+                                    <span>instructions:</span>
+                                    <textarea id="instr" placeholder="instructions"></textarea><br>
+                                    <span>price:</span>
+                                    <textarea id="price" placeholder="price"></textarea><br>
+                                    <button id="submitRecipe">Recipe update</button>
+                                    `
+                                    
+                            let submitRecipe=document.getElementById("submitRecipe")
+                            submitRecipe.addEventListener("click",async()=>{
+                                try{
+                                    let upd_recipe={
+                                        title:document.getElementById("title").value,
+                            description:document.getElementById("desc").value,
+                            ingredients:document.getElementById("ingd").value,
+                            instructions:document.getElementById("instr").value,
+                            price:Number(document.getElementById("price").value)
+                            }
+                            let response=await fetch(`http://127.0.0.1:8000/put_recipe/${inp.value}`,{
+                                method:"PUT",
+                                headers:{
+                                "Content-Type": "application/json",
+                                "authorization":`Bearer ${token}`
+                                
+                            },
+                            body:JSON.stringify(upd_recipe)
+                            })
+                            let data=await response.json()
+                            
+                            if(response.ok){
+                                let updrecipes=data["recipe"]
+                                alert(data.message)
+                                    main.innerHTML=`
+                                    <h2>${updrecipes.title}</h2>
+                                    <p>
+                                    <b>Description</b>
+                                    ${updrecipes.description}
+                                    </p>
+                                    <p>
+                                    <b>Ingredients</b>
+                                    ${updrecipes.ingredients}
+                                    </p>
+                                    <p>
+                                    <b>Instructions</b>
+                                    ${updrecipes.instructions}
+                                    </p>
+                                    <p>
+                                    <b>price</b>
+                                    ${updrecipes.price}
+                                    </p>
+                                    <hr>
+                                `
+                                }
+                                else{
+                                    alert("recipe not updated")
+                                }
+                                }
+                                catch(error){
+                                    alert(error.message)
+                                }
+                            })
+                                
+                                })
+                                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                        
+                                }
+                            else{
+                                    alert(data.detail || "recipe not found")
+                            }
+                        }    
+                            catch(error){
+                                console.error(error);
+                                alert("Request failed: " + error.message)
+                                
+                            }    
+                        })   
+                    }})
+
+        //show all recipes
+        let MENU2=document.getElementById("menu")
+        let allRecipes=document.getElementById("allRecipes")
+        allRecipes.addEventListener("click",async ()=>{
+            console.log("All recipes clicked");
+            let d=menu.classList.toggle("block")
+            if(d){
+                menu.style.display="none"
+            }
+        
+        let token=localStorage.getItem("token")
+        if(!token){
+            console.log("token",token);
+            
+            alert("user not login")
+            return
+        }
+        else{
+            console.log("TOKEN:", token);
+            try{
+            let response=await fetch("http://127.0.0.1:8000/get_recipies",{
+                method:"GET",
+                    headers:{
+                        "authorization":`Bearer ${token}`
+                    }})
+            let data=await response.json()
+            if(response.ok){
+                let recipes=data["all recipes"]
+                let main=document.querySelector("main")
+            main.innerHTML=`
+                <h1 style="text-align:center">MENU</h1>
+                <div id="d1"></div>
+            `
+            let container=document.getElementById("d1")
+            recipes.forEach((recipe)=>{
+                container.innerHTML+=`
+                <h2>${recipe.title}</h2>
+                <p>
+                    <b>Description</b>
+                    ${recipe.description}
+                    </p>
+                    <p>
+                    <b>Ingredients</b>
+                    ${recipe.ingredients}
+                    </p>
+                    <p>
+                    <b>Instructions</b>
+                    ${recipe.instructions}
+                    </p>
+                    <p>
+                    <b>recipe_id</b>
+                    ${recipe.id}
+                    </p>
+                    <p>
+                    <b>recipe_id</b>
+                    ${recipe.price}
+                    </p>
+                    <p>
+                        <button class="sub">-</button>
+                        <span class="span">1</span>
+                        <button class="add">+</button>
+                    </p>
+                    <p>
+                    <button class="addCartBtn" data-id="${recipe.id}">Add to Cart</button>
+                    </p>
+                    <hr>
+                `
+            })
+            let sub=document.querySelectorAll(".sub")
+            let add=document.querySelectorAll(".add")
+            let span=document.querySelectorAll(".span")
+            add.forEach((button,index)=>{
+                button.addEventListener("click",()=>{
+                span[index].innerText=Number(span[index].innerText)+1
+            })
+            })
+            sub.forEach((button,index)=>{
+                button.addEventListener("click",()=>{
+                    if(Number(span[index].innerText)>1){
+                span[index].innerText=Number(span[index].innerText)-1
+                    }
+            })
+            })
+            
+
+            // ########################################PUSH TO CART##########################################
+            let buttons=document.querySelectorAll(".addCartBtn")
+            
+            buttons.forEach((button,index)=>{
+            button.addEventListener("click",async ()=>{
+                let quantity_num=Number(span[index].innerText)
+                let recipeID=button.dataset.id
+                try{
+                let response=await fetch(`http://127.0.0.1:8000/cart_recipe/${recipeID}?quantity=${quantity_num}`,{
+                    method:"POST",
+                    headers:{
+                    "authorization":`Bearer ${token}`
+                    },
+
+                })
+                let data=await response.json()
+                if(response.ok){
+                    alert("added item to cart_table")
+                }
+                else{
+                    alert("recipe not found")
+                }
+                }
+                catch(error){
+                    alert(error.message)
+                }
+            })
+        })
+            // ########################################PUSH TO CART##########################################
+            }
+            else{
+                alert(data.detail || "recipes not found")
+            }
+        
+        }
+    catch(error){
+        console.error(error);
+        
+        alert("404 ERROR")
+    }    
+    }
+        })
+        //createRecipe
+        let MENU3=document.getElementById("menu")
+        let createRecipe=document.getElementById("createRecipe")
+        createRecipe.addEventListener("click",()=>{
+            let d=menu.classList.toggle("block")
+            if(d){
+                menu.style.display="none"
+            }
+            console.log("Create Recipe menu clicked");
+            let main=document.querySelector("main")
+            main.innerHTML=`
+            <h2 style="text-align:center">Create Recipe</h2>
+            <span>title:</span>
+            <input id="title" type="text" placeholder="title"><br>
+            <span>description:</span>
+            <textarea id="desc" placeholder="description"></textarea><br>
+            <span>ingredients:</span>
+            <textarea id="ingd" placeholder="ingredients"></textarea><br>
+            <span>instructions:</span>
+            <textarea id="instr" placeholder="instructions"></textarea><br><br>
+            <span>Price:</span>
+            <input id="prc" type="number" placeholder="price"><br>
+            <button id="submitRecipe">Recipe created</button>
+            `
+        
+        let submitRecipe=document.getElementById("submitRecipe")
+        submitRecipe.addEventListener("click",async ()=>{
+            if(document.getElementById("instr").value=="" && document.getElementById("ingd").value=="" && document.getElementById("desc").value=="" && document.getElementById("title").value==""){
+                alert("plz fill the details")
+            }
+        else{
+        let token=localStorage.getItem("token")
+        if(!token){
+            alert("user not login")
+        }
+        else{
+            let n_recipe={
+                title:document.getElementById("title").value,
+                description:document.getElementById("desc").value,
+                ingredients:document.getElementById("ingd").value,
+                instructions:document.getElementById("instr").value,
+                price:Number(document.getElementById("prc").value)
+            }
+            try{
+                let response=await fetch("http://127.0.0.1:8000/recipes",{
+                    method:"POST",
+                    headers:{
+                        "content-Type":"application/json",
+                        "authorization":`Bearer ${token}`
+                    },
+                    body:JSON.stringify(n_recipe)
+                })
+                let data=await response.json()
+                if(response.ok){
+                    alert("recipe added successfully")
+                document.getElementById("title").value=""
+                document.getElementById("desc").value=""
+                document.getElementById("ingd").value=""
+                document.getElementById("instr").value=""
+                document.getElementById("prc").value=""
+                }
+                else{
+                        alert("recipe not added")
+                }
+            }
+            catch(error){
+                alert("404 ERROR")
+            }
+        }
+    }})
+    })
+
+    </script>
+
+</body>
+
+</html>
