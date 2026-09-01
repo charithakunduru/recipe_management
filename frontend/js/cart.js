@@ -6,7 +6,7 @@ async function demo(){
         return
     }
     try{
-        let response=await fetch("https://backend-94supzxot-charitha-kundurus-projects.vercel.app/all_cart_recipes",{
+        let response=await fetch("https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/all_cart_recipes",{
             method:"GET",
             headers:{
                 "authorization":`Bearer ${token}`

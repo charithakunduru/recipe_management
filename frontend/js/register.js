@@ -13,7 +13,7 @@ btn.addEventListener("click",async (e)=>{
             password:pwd.value
         } 
         try{
-            let response=await fetch("https://backend-94supzxot-charitha-kundurus-projects.vercel.app/register",{
+            let response=await fetch("https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/register",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
