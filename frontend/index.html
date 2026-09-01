@@ -176,7 +176,7 @@
             }
             else{
                 try{
-                    let response=await fetch("https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/all_mine",{
+                    let response=await fetch("https://backend-self-two-13.vercel.app/all_mine",{
                         method:"GET",
                         headers:{
                         "authorization":`Bearer ${token}`
@@ -263,7 +263,7 @@
                             return;
                         }
                         try{
-                            let response=await fetch(`https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/get_recipe/${inp.value}`,{
+                            let response=await fetch(`https://backend-self-two-13.vercel.app/get_recipe/${inp.value}`,{
                                 method:"GET",
                                 headers:{
                                 "authorization":`Bearer ${token}`
@@ -295,7 +295,7 @@
                                     let put=document.getElementById("put")
                                     del.addEventListener("click",async ()=>{
                                     try{
-                                    let response=await fetch(`https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/delete/${inp.value}`,{
+                                    let response=await fetch(`https://backend-self-two-13.vercel.app/delete/${inp.value}`,{
                                         method:"DELETE",
                                         headers:{
                                         "authorization":`Bearer ${token}`
@@ -341,7 +341,7 @@
                             instructions:document.getElementById("instr").value,
                             price:Number(document.getElementById("price").value)
                             }
-                            let response=await fetch(`https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/put_recipe/${inp.value}`,{
+                            let response=await fetch(`https://backend-self-two-13.vercel.app/put_recipe/${inp.value}`,{
                                 method:"PUT",
                                 headers:{
                                 "Content-Type": "application/json",
@@ -421,7 +421,7 @@
         else{
             console.log("TOKEN:", token);
             try{
-            let response=await fetch("https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/get_recipies",{
+            let response=await fetch("https://backend-self-two-13.vercel.app/get_recipies",{
                 method:"GET",
                     headers:{
                         "authorization":`Bearer ${token}`
@@ -494,7 +494,7 @@
                 let quantity_num=Number(span[index].innerText)
                 let recipeID=button.dataset.id
                 try{
-                let response=await fetch(`https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/cart_recipe/${recipeID}?quantity=${quantity_num}`,{
+                let response=await fetch(`https://backend-self-two-13.vercel.app/cart_recipe/${recipeID}?quantity=${quantity_num}`,{
                     method:"POST",
                     headers:{
                     "authorization":`Bearer ${token}`
@@ -572,7 +572,7 @@
                 price:Number(document.getElementById("prc").value)
             }
             try{
-                let response=await fetch("https://backend-c0y3dkebt-charitha-kundurus-projects.vercel.app/recipes",{
+                let response=await fetch("https://backend-self-two-13.vercel.app/recipes",{
                     method:"POST",
                     headers:{
                         "content-Type":"application/json",
