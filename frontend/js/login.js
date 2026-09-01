@@ -9,7 +9,7 @@ btn.addEventListener("click",async (e)=>{
         formData.append("username", em.value)
         formData.append("password", pwd.value)
         try{
-            let response=await fetch("http://127.0.0.1:8000/login",{
+            let response=await fetch("https://backend-94supzxot-charitha-kundurus-projects.vercel.app/login",{
                 method:"POST",
                 headers:{
                 "Content-Type":"application/x-www-form-urlencoded"
